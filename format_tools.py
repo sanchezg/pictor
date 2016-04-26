@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import numpy
-from sklearn.cross_validation import train_test_split
 
 """This file provides functions and tools for formatting data into different
 options."""
@@ -96,6 +95,7 @@ def conform_data(dataset, labels, target_feat, test_prop=0.30):
     function and returns the trainer and tests arrays returned by
     sklearn.cross_validation module.
     """
+    from sklearn.cross_validation import train_test_split
     X = []
     y = []
     keys = dataset[0].keys()
@@ -105,7 +105,8 @@ def conform_data(dataset, labels, target_feat, test_prop=0.30):
             if label in labels and label != target_feat
             ])
         y.append(dataset[element_idx][target_feat])
-    return train_test_split(X, y, test_size=test_prop, random_state=42)
+    return train_test_split(
+        X, y, test_size=test_prop, random_state=42)
 
 
 def plot_data(x_label, y_label, data, color='b'):
@@ -175,7 +176,7 @@ def autoformat_element(element):
             element_formatted = int(element)
     except ValueError:
         element_formatted = element
-    return element
+    return element_formatted
 
 
 def autoformat_list(data_list):
