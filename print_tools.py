@@ -1,6 +1,5 @@
 def print_some_data(x, y, labels='all', count=25):
-    """
-    Prints the number count of data from x and y
+    """Prints the number count of data from x and y
     If labels = 'all' prints all data from x. If not
     only prints the data with the labels in labels.
     """
@@ -15,3 +14,15 @@ def print_some_data(x, y, labels='all', count=25):
     TODO: Print only labels in 'labels' parameter.
     """
     return
+
+
+def print_data(dataset, unique=None):
+    """This function receives an object or container and tries to print in
+    a pretty format readable by the user, using PrettyPrinter library.
+    """
+    from pprint import PrettyPrinter
+    printer = PrettyPrinter()
+    if unique:
+        printer.pprint(dataset[unique])
+    else:
+        printer.pprint(dataset)
