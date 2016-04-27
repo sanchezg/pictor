@@ -40,6 +40,7 @@ def load_data_from_csv(filename, delimiter='|', first_line=True,
         else:
             labels = data_line
             first_line_loaded = True
+
     return dataset, labels
 
 
@@ -90,6 +91,16 @@ def format_input_data(dataset, feature_label, target_label):
     return features, targets
 
 
+def transform_dataset(dataset_d):
+    """Uses sklearn DictVectorizer to transform the dataset and convert inner
+    categorical features in a suitable representation.
+    """
+    from sklearn.feature_extraction import DictVectorizer
+    vec = DictVectorizer(sparse=False)
+    dataset_t = vec.fit_transform(dataset_d)
+    return dataset_t
+
+
 def conform_data(dataset, labels, target_feat, test_prop=0.30):
     """This function takes the dataset returned by 'load_data_from_csv'
     function and returns the trainer and tests arrays returned by
@@ -101,10 +112,10 @@ def conform_data(dataset, labels, target_feat, test_prop=0.30):
     keys = dataset[0].keys()
     for element_idx in range(0, len(dataset)):
         X.append([
-            dataset[element_idx][label] for label in keys
+            autoformat_element(dataset[element_idx][label]) for label in keys
             if label in labels and label != target_feat
             ])
-        y.append(dataset[element_idx][target_feat])
+        y.append(autoformat_element(dataset[element_idx][target_feat]))
     return train_test_split(
         X, y, test_size=test_prop, random_state=42)
 
@@ -175,21 +186,11 @@ def autoformat_element(element):
         else:
             element_formatted = int(element)
     except ValueError:
-        element_formatted = element
+        # The element is of str type
+        element_formatted = str_sanitization(element)
     return element_formatted
 
 
-def autoformat_list(data_list):
-    """Tries to convert each element of the list passed as parameter in
-    int or float. Otherwise it remains as is. The resulting list is returned.
-    """
-    list_formatted = [autoformat_element(element) for element in data_list]
-    return list_formatted
-
-
-def autoformat_np(X):
-    """This function takes a numpy array and converts all numbers from str
-    format in int or float. The resulting array is returned as numpy array.
-    """
-    X_conv = [autoformat_list(arr) for arr in X]
-    return numpy.array(X_conv)
+def str_sanitization(element):
+    """Erases the '\n' at the end in some str objects"""
+    return element.split('\n')[0]

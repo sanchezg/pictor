@@ -5,7 +5,7 @@ from time import time
 
 sys.path.append('.')
 from format_tools import load_data_from_csv, plot_data
-from format_tools import conform_data, autoformat_np, autoformat_list
+from format_tools import conform_data, transform_dataset
 from print_tools import print_some_data
 
 corpus_dataset = []
@@ -39,12 +39,6 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = conform_data(corpus_dataset, labels_used, 'interactions')
     print 'Time conforming data: ', time() - t0
 
-    # Autoconvert numerical values in int or float type
-    X_train = autoformat_np(X_train)
-    X_test = autoformat_np(X_test)
-    y_train = autoformat_list(y_train)
-    y_test = autoformat_list(y_test)
-
-    print_some_data(X_train, y_train)
+    print_some_data(X_train, y_train, count=1)
 
     # plot_data('media_likes_count', 'interactions', data[a0:a1])
