@@ -4,16 +4,17 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
     performs a training using an sklearn algorithm and calculates the score
     using the testing inputs and outputs.
     """
-    from sklearn.svm import SVR
+    # from sklearn.svm import SVR
     # from sklearn.neighbors import KNeighborsRegressor
-    # from sklearn.linear_model import SGDRegressor
+    from sklearn.linear_model import SGDRegressor
     # from sklearn.linear_model import LogisticRegression
     # from sklearn.linear_model import LinearRegression
+    from sklearn.metrics import mean_squared_error
     from time import time
     
-    regressor = SVR()
+    # regressor = SVR()
     # regressor = KNeighborsRegressor()
-    # regressor = SGDRegressor()
+    regressor = SGDRegressor()
     # regressor = LogisticRegression(solver='sag', max_iter=100, n_jobs=2)
     # regressor = LinearRegression()
 
@@ -48,7 +49,7 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
 
 
     t0 = time()
-    acc = regressor.score(X_test, y_test)
+    acc = mean_squared_error(y_test, prediction)
     t1 = time() - t0
     print 'Time testing algorithm: {0}. Accuracy: {1}'.format(t1, acc)
 
@@ -68,7 +69,7 @@ def outliers_cleaner(predictions, inputs, outputs, percentile=10):
     
     errors.sort()
     # Discard the 10% values with bigger error
-    idx_discard = len(errors)/10
+    idx_discard = len(errors)/percentile
     errors = errors[:-idx_discard]
     
     for error_idx in range(0, len(errors)):

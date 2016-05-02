@@ -106,6 +106,6 @@ if __name__ == '__main__':
 
     # print 'Beggining with predictions...'
     make_prediction(X_train, y_train, X_test, y_test, show_score=True,
-        slice_samples=50)
+        slice_samples=0)
 
     # print_random_elements(y_train, count=500)
