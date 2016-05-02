@@ -6,7 +6,7 @@ import numpy
 options."""
 
 
-def load_data_from_csv(filename, delimiter='|', first_line=True,
+def load_dataset_from_csv(filename, delimiter='|', first_line=True,
                        output_format='dict'):
     """This function tries to load a list of dictionaries from a csv file.
     Parameter 'first_line' indicates if the first line in the csv file
@@ -44,6 +44,68 @@ def load_data_from_csv(filename, delimiter='|', first_line=True,
     return dataset, labels
 
 
+def discard_features(dataset_d, features_unwanted):
+    """This function removes from dataset_d all features which labels are in
+    features_unwanted.
+    dataset_d should be a list of dicts as the one returned from
+    'load_dataset_from_csv'.
+    features_unwanted should be a list of labels in str format.
+    """
+    for row in dataset_d:
+        for feature in features_unwanted:
+            try:
+                del row[feature]
+            except KeyError:
+                pass
+    return
+
+
+def preformat_dataset(dataset_d):
+    """This function takes the dataset loaded with 'load_dataset_from_csv'
+    function and converts all numerical values to float type.
+    """
+    count = len(dataset_d)
+    labels = dataset_d[0].keys()
+    for idx in xrange(count):
+        for label in labels:
+            dataset_d[idx][label] = autoformat_element(dataset_d[idx][label])
+    return
+
+
+def split_dataset(dataset_d, target_feature='interactions'):
+    """This function removes from the input dataset those values corresponding
+    to the target feature (output), and append them to other list returned at
+    the end.
+    """
+    output_values = []
+    for row in dataset_d:
+        output_values.append(row.pop(target_feature))
+    return output_values
+
+
+def transform_dataset(dataset_d):
+    """Uses sklearn DictVectorizer to transform the dataset and convert inner
+    categorical features in a suitable representation.
+    """
+    from sklearn.feature_extraction import DictVectorizer
+    vec = DictVectorizer(sparse=False)
+    dataset_t = vec.fit_transform(dataset_d)
+    # print dataset_d[0]
+    # print dataset_t[0]
+    # print len(vec.get_feature_names())
+    return dataset_t
+
+
+def conform_data(dataset, targets, test_prop=0.30):
+    """This function takes the dataset returned by 'transform_dataset'
+    function and returns the trainer and tests arrays returned by
+    sklearn.cross_validation module.
+    """
+    from sklearn.cross_validation import train_test_split
+    return train_test_split(
+        dataset, targets, test_size=test_prop, random_state=42)
+
+
 def format_data(dataset_d, target_label, exc_features=[]):
     """This function receives a dictionary formatted with load_data_from_csv
     function and returns a pair of features and targets list of values.
@@ -72,54 +134,6 @@ def format_data(dataset_d, target_label, exc_features=[]):
     return features, target
 
 
-def format_input_data(dataset, feature_label, target_label):
-    """This function takes a dictionary returned by 'load_data_from_csv' and
-    returns a list of pairs corresponding to the keys 'feature_label' and
-    'target_label'.
-    """
-    targets = []
-    features = []
-
-    for element_idx in range(0, len(dataset)):
-        feature_val = dataset[element_idx][feature_label]
-        target_val = dataset[element_idx][target_label]
-        try:
-            features.append(float(feature_val))
-            targets.append(float(target_val))
-        except ValueError, e:
-            pass
-    return features, targets
-
-
-def transform_dataset(dataset_d):
-    """Uses sklearn DictVectorizer to transform the dataset and convert inner
-    categorical features in a suitable representation.
-    """
-    from sklearn.feature_extraction import DictVectorizer
-    vec = DictVectorizer(sparse=False)
-    dataset_t = vec.fit_transform(dataset_d)
-    return dataset_t
-
-
-def conform_data(dataset, labels, target_feat, test_prop=0.30):
-    """This function takes the dataset returned by 'load_data_from_csv'
-    function and returns the trainer and tests arrays returned by
-    sklearn.cross_validation module.
-    """
-    from sklearn.cross_validation import train_test_split
-    X = []
-    y = []
-    keys = dataset[0].keys()
-    for element_idx in range(0, len(dataset)):
-        X.append([
-            autoformat_element(dataset[element_idx][label]) for label in keys
-            if label in labels and label != target_feat
-            ])
-        y.append(autoformat_element(dataset[element_idx][target_feat]))
-    return train_test_split(
-        X, y, test_size=test_prop, random_state=42)
-
-
 def plot_data(x_label, y_label, data, color='b'):
     """This function receives a list of points and labels and plots them using
     matplot library.
@@ -139,52 +153,31 @@ def plot_data(x_label, y_label, data, color='b'):
     return
 
 
-def classify_elements(dataset, interest_key, classifications_number):
-    """This function classify a set of continuous features included in a
-    dataset into a list of 'classifications_number' of classes.
+def discard_outliers(dataset, threshold, label='interactions'):
+    """Removes from the input dataset those rows with element bigger than
+    threshold.
     """
-    keys = dataset.keys()
-    if interest_key not in keys:
-        print 'The feature is not in the dataset'
-        return
-    count_elements = len(dataset)
-    interest_values = [
-        dataset[idx][interest_key] for idx in xrange(count_elements)
-        ]
-    range_class = (max(interest_values) - min())/classifications_number
-    list_class = []
-    for idx in xrange(classifications_number):
-        list_class.append(interest_values[
-            idx*classifications_number:(idx+1)*classifications_number
-            ])
-    return list_class
-
-
-def list_from_features(dataset, labels):
-    """As dataset is a list of dicts, then we need to obtain keys from the
-    first element.
-    """
-    return [key for key in dataset[0].keys() if key not in labels]
-
-
-def discard_outliers(data_list, threshold):
-    """Returns a list without the elements that are bigger than the threshold.
-    """
-    count = len(data_list)
-    formatted = [
-        data_list[idx] for idx in xrange(count) if data_list[idx] < threshold
-        ]
-    return formatted
+    dataset_t = dataset
+    idx = 0
+    for row in dataset:
+        if row[label] > threshold:
+            del dataset_t[idx]
+        idx += 1
+    dataset = dataset_t[:]
+    return
 
 
 def autoformat_element(element):
-    """Tries to convert and return the passed parameter in float or int.
+    """Tries to convert the passed parameter in float format.
+    If the input parameter is of str type then only a sanitization of str is
+    performed.
     """
     try:
-        if '.' in element:
-            element_formatted = float(element)
+        # Some elements can be empty, they should contain a value
+        if element == '':
+            element_formatted = 0.
         else:
-            element_formatted = int(element)
+            element_formatted = float(element)
     except ValueError:
         # The element is of str type
         element_formatted = str_sanitization(element)
@@ -194,3 +187,30 @@ def autoformat_element(element):
 def str_sanitization(element):
     """Erases the '\n' at the end in some str objects"""
     return element.split('\n')[0]
+
+
+def count_equal_elements(dataset, label1, label2):
+    """Helper function: counts features with equal values."""
+    count_equals = 0
+    count_l1_zero = 0
+    count_l2_zero = 0
+    count_distinct = 0
+    for row in dataset:
+        if row[label1] == row[label2]:
+            count_equals += 1
+        elif row[label1] == 0 and row[label2] != 0:
+            count_l1_zero += 1
+        elif row[label1] != 0 and row[label2] == 0:
+            count_l2_zero += 1
+        else:
+            count_distinct += 1
+
+    print 'Total {0} elements equals to {1} elements: {2}'.format(label1,
+        label2, count_equals)
+    print 'Total {0} elements totally distincts to {1} elements: {2}'.format(
+        label1, label2, count_distinct)
+    print 'Total {0} elements equals to zero: {1}'.format(label1,
+        count_l1_zero)
+    print 'Total {0} elements equals to zero: {1}'.format(label2,
+        count_l2_zero)
+    return
