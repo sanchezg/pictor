@@ -25,10 +25,13 @@ if __name__ == '__main__':
     features_unwanted.append('caption_char_lenght')
     # features_unwanted.append('caption_hash_count')
     features_unwanted.append('caption_hash_ratio') # Dependant variable
+    features_unwanted.append('caption_language')
+    features_unwanted.append('caption_non_alpha_count')
     features_unwanted.append('caption_upper_count')
-    # features_unwanted.append('caption_world_length')
+    features_unwanted.append('caption_world_length')
     features_unwanted.append('customer')
     features_unwanted.append('customer_id')
+    features_unwanted.append('days')
     features_unwanted.append('faces_detected')
     features_unwanted.append('has_nudity')
     features_unwanted.append('hashtags_category_count')
@@ -38,14 +41,16 @@ if __name__ == '__main__':
     features_unwanted.append('hashtags_most_frequent_jaccard')
     features_unwanted.append('hashtags_most_popular_jaccard')
     features_unwanted.append('hashtags_most_popular_similarity')
-    # features_unwanted.append('hashtags_ontology_reach')
+    features_unwanted.append('hashtags_ontology_reach')
     features_unwanted.append('hashtags_ratio_most_frequent')
     features_unwanted.append('hashtags_ratio_most_popular')
+    features_unwanted.append('how_many_faces')
     features_unwanted.append('image_url')
     features_unwanted.append('location_longitude_category')
-    features_unwanted.append('location_country')
+    # features_unwanted.append('location_country')
     features_unwanted.append('media_age_on_system')
     features_unwanted.append('media_bright_coefficient_variation')
+    features_unwanted.append('media_bright_variance')
     features_unwanted.append('media_color_blue')
     features_unwanted.append('media_color_green')
     features_unwanted.append('media_color_red')
@@ -80,11 +85,10 @@ if __name__ == '__main__':
     # count_equal_elements(corpus_dataset, 'hashtags_ontology_reach',
     #     'hashtags_reach_score')
 
-    print 'Discarding outliers...'
-    t0 = time()
-    discard_outliers(corpus_dataset, 30000., 'interactions')
-    print 'Time discarding outliers: ', time() - t0
-
+    # print 'Discarding outliers...'
+    # t0 = time()
+    # discard_outliers(corpus_dataset, 30000., 'interactions')
+    # print 'Time discarding outliers: ', time() - t0
 
     print 'Splitting targets...'
     t0 = time()
@@ -104,8 +108,8 @@ if __name__ == '__main__':
     # print_some_data(X_train, y_train, count=1)
     # plot_data('media_likes_count', 'interactions', data[a0:a1])
 
-    # print 'Beggining with predictions...'
+    print 'Beggining with predictions...'
     make_prediction(X_train, y_train, X_test, y_test, show_score=True,
-        slice_samples=0)
+        slice_samples=20)
 
     # print_random_elements(y_train, count=500)
