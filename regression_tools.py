@@ -82,10 +82,11 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
     acc1 = median_absolute_error(y_test, prediction)
     acc2 = regressor.score(X_test, y_test)
     t1 = time() - t0
-    print 'Time testing algorithm: {0}. Accuracy: \
-        mean_squared_error: {1}, \
-        median_absolute_error: {2},\
-        regressor.score: {3}'.format(t1, acc, acc1, acc2)
+    print "Time testing algorithm: {0}.\
+    \nAccuracy:\
+    \nmean_squared_error: {1},\
+    \nmedian_absolute_error: {2},\
+    \nregressor.score: {3}".format(t1, acc, acc1, acc2)
 
 
 def outliers_cleaner(predictions, inputs, outputs, percentile=10):
