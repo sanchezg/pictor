@@ -3,11 +3,13 @@
 import sys
 from time import time
 
-sys.path.append('.')
+sys.path.append('tools/')
+
 from format_tools import load_dataset_from_csv, plot_data
 from format_tools import discard_features, preformat_dataset
 from format_tools import transform_dataset, split_dataset, conform_data
 from format_tools import discard_outliers, count_equal_elements
+from format_tools import scale_dataset
 from regression_tools import make_prediction
 from print_tools import print_some_data, print_from_dataset, inspect_dataset
 from print_tools import print_random_elements, print_threshold_element
@@ -21,53 +23,54 @@ if __name__ == '__main__':
                                     '../consolidated_features.csv')
     print 'Time loading dataset: ', time() - t0
 
-    features_unwanted = []
-    features_unwanted.append('caption_char_lenght')
-    # features_unwanted.append('caption_hash_count')
-    features_unwanted.append('caption_hash_ratio') # Dependant variable
-    features_unwanted.append('caption_language')
-    features_unwanted.append('caption_non_alpha_count')
-    features_unwanted.append('caption_upper_count')
-    features_unwanted.append('caption_world_length')
-    features_unwanted.append('customer')
-    features_unwanted.append('customer_id')
-    features_unwanted.append('days')
-    features_unwanted.append('faces_detected')
-    features_unwanted.append('has_nudity')
-    features_unwanted.append('hashtags_category_count')
-    features_unwanted.append('hashtags_count_segmented')
-    features_unwanted.append('hashtags_count')
-    features_unwanted.append('hashtags_encoding')
-    features_unwanted.append('hashtags_most_frequent_jaccard')
-    features_unwanted.append('hashtags_most_popular_jaccard')
-    features_unwanted.append('hashtags_most_popular_similarity')
-    features_unwanted.append('hashtags_ontology_reach')
-    features_unwanted.append('hashtags_ratio_most_frequent')
-    features_unwanted.append('hashtags_ratio_most_popular')
-    features_unwanted.append('how_many_faces')
-    features_unwanted.append('image_url')
-    features_unwanted.append('location_longitude_category')
-    # features_unwanted.append('location_country')
-    features_unwanted.append('media_age_on_system')
-    features_unwanted.append('media_bright_coefficient_variation')
-    features_unwanted.append('media_bright_variance')
-    features_unwanted.append('media_color_blue')
-    features_unwanted.append('media_color_green')
-    features_unwanted.append('media_color_red')
-    features_unwanted.append('media_filter')
-    features_unwanted.append('media_hue_coefficient_variation')
-    features_unwanted.append('media_hue_variance')
-    features_unwanted.append('media_id')
-    features_unwanted.append('media_orientation')
-    features_unwanted.append('media_pixels')
-    features_unwanted.append('media_saturation_coefficient_variation')
-    features_unwanted.append('media_saturation_variance')
-    features_unwanted.append('Unnamed: 0') # Additional label 
-    features_unwanted.append('') # Element order
+    features_undesired = []
+    features_undesired.append('caption_char_lenght')
+    # features_undesired.append('caption_hash_count')
+    features_undesired.append('caption_hash_ratio') # Dependant variable
+    features_undesired.append('caption_language')
+    features_undesired.append('caption_non_alpha_count')
+    features_undesired.append('caption_upper_count')
+    features_undesired.append('caption_world_length')
+    features_undesired.append('customer')
+    features_undesired.append('customer_id')
+    features_undesired.append('days')
+    features_undesired.append('faces_detected')
+    features_undesired.append('has_nudity')
+    features_undesired.append('hashtags_category_count')
+    features_undesired.append('hashtags_count_segmented')
+    features_undesired.append('hashtags_count')
+    features_undesired.append('hashtags_encoding')
+    features_undesired.append('hashtags_language')
+    features_undesired.append('hashtags_most_frequent_jaccard')
+    features_undesired.append('hashtags_most_popular_jaccard')
+    features_undesired.append('hashtags_most_popular_similarity')
+    features_undesired.append('hashtags_ontology_reach')
+    features_undesired.append('hashtags_ratio_most_frequent')
+    features_undesired.append('hashtags_ratio_most_popular')
+    features_undesired.append('how_many_faces')
+    features_undesired.append('image_url')
+    features_undesired.append('location_longitude_category')
+    features_undesired.append('location_country')
+    features_undesired.append('media_age_on_system')
+    features_undesired.append('media_bright_coefficient_variation')
+    features_undesired.append('media_bright_variance')
+    features_undesired.append('media_color_blue')
+    features_undesired.append('media_color_green')
+    features_undesired.append('media_color_red')
+    features_undesired.append('media_filter')
+    features_undesired.append('media_hue_coefficient_variation')
+    features_undesired.append('media_hue_variance')
+    features_undesired.append('media_id')
+    features_undesired.append('media_orientation')
+    features_undesired.append('media_pixels')
+    features_undesired.append('media_saturation_coefficient_variation')
+    features_undesired.append('media_saturation_variance')
+    features_undesired.append('Unnamed: 0') # Additional label 
+    features_undesired.append('') # Element order
 
     print 'Discarding undesired features...'
     t0 = time()
-    discard_features(corpus_dataset, features_unwanted)
+    discard_features(corpus_dataset, features_undesired)
     print 'Time discarding features: ', time() - t0
 
     print 'Preformatting dataset...'
@@ -90,6 +93,7 @@ if __name__ == '__main__':
     # discard_outliers(corpus_dataset, 30000., 'interactions')
     # print 'Time discarding outliers: ', time() - t0
 
+
     print 'Splitting targets...'
     t0 = time()
     targets = split_dataset(corpus_dataset)
@@ -99,6 +103,12 @@ if __name__ == '__main__':
     t0 = time()
     dataset = transform_dataset(corpus_dataset)
     print 'Time transforming dataset: ', time() - t0
+
+    print 'Scaling features...'
+    t0 = time()
+    scale_dataset(dataset)
+    # scale_dataset(targets)
+    print 'Time scaling features: {}'.format(time()-t0)
 
     print 'Conforming training and testing arrays...'
     t0 = time()
