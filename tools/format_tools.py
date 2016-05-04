@@ -15,6 +15,10 @@ def load_dataset_from_csv(filename, delimiter='|', first_line=True,
     The function returns the dataset (as a list of dict) and the labels
     (as a list of str).
     """
+    from time import time
+    print 'Loading dataset from csv file...'
+    t0 = time()
+    
     labels = []
     dataset = []
     first_line_loaded = False
@@ -40,8 +44,19 @@ def load_dataset_from_csv(filename, delimiter='|', first_line=True,
         else:
             labels = data_line
             first_line_loaded = True
-
+    print "Time loading dataset: {}".format(time() - t0)
     return dataset, labels
+
+
+def load_features_from_file(filename='features_unwanted.csv'):
+    """This function loads a list with features names from the passed
+    argument.
+    """
+    features_list = []
+    with open(filename, 'r') as f:
+        line = f.readline()
+        features_list = [feat for feat in line.split(',')]
+    return features_list
 
 
 def discard_features(dataset_d, features_unwanted):
@@ -51,12 +66,18 @@ def discard_features(dataset_d, features_unwanted):
     'load_dataset_from_csv'.
     features_unwanted should be a list of labels in str format.
     """
+    from time import time
+
+    print 'Discarding undesired features...'
+    t0 = time()
+    
     for row in dataset_d:
         for feature in features_unwanted:
             try:
                 del row[feature]
             except KeyError:
                 pass
+    print "Time discarding features: {}".format(time() - t0)
     return
 
 
@@ -64,11 +85,26 @@ def preformat_dataset(dataset_d):
     """This function takes the dataset loaded with 'load_dataset_from_csv'
     function and converts all numerical values to float type.
     """
+    from time import time
+    
+    print 'Preformatting dataset...'
+    t0 = time()
+
     count = len(dataset_d)
     labels = dataset_d[0].keys()
     for idx in xrange(count):
         for label in labels:
             dataset_d[idx][label] = autoformat_element(dataset_d[idx][label])
+    print "Time preformatting dataset: {}".format(time() - t0)
+    return
+
+
+def scale_dataset(corpus_dataset):
+    """
+    """
+    from sklearn.preprocessing import MinMaxScaler
+    scaler = MinMaxScaler()
+    corpus_dataset = scaler.fit_transform(corpus_dataset)
     return
 
 
@@ -77,9 +113,16 @@ def split_dataset(dataset_d, target_feature='interactions'):
     to the target feature (output), and append them to other list returned at
     the end.
     """
+    from time import time
+
+    print 'Splitting targets...'
+    t0 = time()
+
     output_values = []
     for row in dataset_d:
         output_values.append(row.pop(target_feature))
+    
+    print "Time splitting dataset: {}".format(time() - t0)
     return output_values
 
 
@@ -87,12 +130,13 @@ def transform_dataset(dataset_d):
     """Uses sklearn DictVectorizer to transform the dataset and convert inner
     categorical features in a suitable representation.
     """
+    from time import time
     from sklearn.feature_extraction import DictVectorizer
+    print 'Transforming dataset...'
+    t0 = time()
     vec = DictVectorizer(sparse=False)
     dataset_t = vec.fit_transform(dataset_d)
-    # print dataset_d[0]
-    # print dataset_t[0]
-    # print len(vec.get_feature_names())
+    print "Time transforming dataset: {}".format(time() - t0)
     return dataset_t
 
 
@@ -101,9 +145,15 @@ def conform_data(dataset, targets, test_prop=0.30):
     function and returns the trainer and tests arrays returned by
     sklearn.cross_validation module.
     """
+    from time import time
     from sklearn.cross_validation import train_test_split
-    return train_test_split(
+    
+    print 'Conforming training and testing arrays...'
+    t0 = time()
+    X_train, X_test, y_train, y_test = train_test_split(
         dataset, targets, test_size=test_prop, random_state=42)
+    print "Time conforming data: {}".format(time() - t0)
+    return X_train, X_test, y_train, y_test
 
 
 def format_data(dataset_d, target_label, exc_features=[]):
