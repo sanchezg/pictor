@@ -7,7 +7,7 @@ options."""
 
 
 def load_dataset_from_csv(filename, delimiter='|', first_line=True,
-                       output_format='dict'):
+                          output_format='dict'):
     """This function tries to load a list of dictionaries from a csv file.
     Parameter 'first_line' indicates if the first line in the csv file
     contains the labels for the dataset. These labels are used as keys
@@ -18,7 +18,7 @@ def load_dataset_from_csv(filename, delimiter='|', first_line=True,
     from time import time
     print 'Loading dataset from csv file...'
     t0 = time()
-    
+
     labels = []
     dataset = []
     first_line_loaded = False
@@ -70,7 +70,7 @@ def discard_features(dataset_d, features_unwanted):
 
     print 'Discarding undesired features...'
     t0 = time()
-    
+
     for row in dataset_d:
         for feature in features_unwanted:
             try:
@@ -86,7 +86,7 @@ def preformat_dataset(dataset_d):
     function and converts all numerical values to float type.
     """
     from time import time
-    
+
     print 'Preformatting dataset...'
     t0 = time()
 
@@ -121,7 +121,7 @@ def split_dataset(dataset_d, target_feature='interactions'):
     output_values = []
     for row in dataset_d:
         output_values.append(row.pop(target_feature))
-    
+
     print "Time splitting dataset: {}".format(time() - t0)
     return output_values
 
@@ -147,7 +147,7 @@ def conform_data(dataset, targets, test_prop=0.30):
     """
     from time import time
     from sklearn.cross_validation import train_test_split
-    
+
     print 'Conforming training and testing arrays...'
     t0 = time()
     X_train, X_test, y_train, y_test = train_test_split(
@@ -255,12 +255,12 @@ def count_equal_elements(dataset, label1, label2):
         else:
             count_distinct += 1
 
-    print 'Total {0} elements equals to {1} elements: {2}'.format(label1,
-        label2, count_equals)
+    print 'Total {0} elements equals to {1} elements: {2}'.format(
+        label1, label2, count_equals)
     print 'Total {0} elements totally distincts to {1} elements: {2}'.format(
         label1, label2, count_distinct)
-    print 'Total {0} elements equals to zero: {1}'.format(label1,
-        count_l1_zero)
-    print 'Total {0} elements equals to zero: {1}'.format(label2,
-        count_l2_zero)
+    print 'Total {0} elements equals to zero: {1}'.format(
+        label1, count_l1_zero)
+    print 'Total {0} elements equals to zero: {1}'.format(
+        label2, count_l2_zero)
     return

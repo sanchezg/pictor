@@ -56,7 +56,7 @@ def process_arguments():
 
 def get_filename():
     args = process_arguments()
-    if args.csv == None:
+    if args.csv is None:
         # Pick default location and filename
         csv_filename = '../consolidated_features.csv'
     else:
@@ -74,11 +74,10 @@ def load_and_format_data(filename):
     # scale_dataset(dataset)
     X_train, X_test, y_train, y_test = conform_data(dataset, targets)
     make_prediction(X_train, y_train, X_test, y_test, show_score=True,
-        slice_samples=20)
+                    slice_samples=20)
     return
 
 
 if __name__ == '__main__':
     csv_filename = get_filename()
     load_and_format_data(csv_filename)
-

@@ -2,10 +2,10 @@ def slice_begin_end(array_len, percentile):
     from random import randint, seed
     from time import clock
     seed(int(clock()))
-    
+
     last_begin = array_len / percentile
     final_len = array_len * (1 - 1/percentile)
-    
+
     begin = randint(0, last_begin)
     end = begin + final_len
     while end >= array_len:
@@ -29,7 +29,7 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
     # from sklearn.kernel_ridge import KernelRidge
     from sklearn.metrics import mean_squared_error, median_absolute_error
     from time import time
-    
+
     # regressor = SVR()
     regressor = NuSVR()
     # regressor = KNeighborsRegressor()
@@ -66,10 +66,10 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
         print 'Re-fitting algorithm due to outliers detection...'
         t0 = time()
         x_input, y_output, errors = zip(*cleaned_data)
-        regressor.fit(x_input, y_output) # re-fit
+        regressor.fit(x_input, y_output)  # re-fit
         t1 = time() - t0
         print 'Time re-fitting algorithm: {}'.format(t1)
-    
+
     print 'Predicting results on test set ...'
     t0 = time()
     prediction = regressor.predict(X_test)
@@ -97,16 +97,16 @@ def outliers_cleaner(predictions, inputs, outputs, percentile=10):
     """
     cleaned_data = []
     errors = []
-    
+
     for pred_idx in range(0, len(predictions)):
         errors.append((abs(predictions[pred_idx]-outputs[pred_idx]),
-            pred_idx))
-    
+                      pred_idx))
+
     errors.sort()
     # Discard the 10% values with bigger error
     idx_discard = len(errors)/percentile
     errors = errors[:-idx_discard]
-    
+
     for error_idx in range(0, len(errors)):
         error, orig_idx = errors[error_idx]
         x_input = inputs[orig_idx]
