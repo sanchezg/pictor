@@ -20,23 +20,22 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
     performs a training using an sklearn algorithm and calculates the score
     using the testing inputs and outputs.
     """
-    # from sklearn.svm import SVR
-    from sklearn.svm import NuSVR
-    # from sklearn.neighbors import KNeighborsRegressor
-    # from sklearn.linear_model import SGDRegressor
-    # from sklearn.linear_model import LogisticRegression
-    # from sklearn.linear_model import LinearRegression
-    # from sklearn.kernel_ridge import KernelRidge
+    from sklearn.linear_model import LinearRegression
+    # from sklearn.linear_model import Lasso
+    # from sklearn.linear_model import Ridge
+    # from sklearn.grid_search import GridSearchCV
     from sklearn.metrics import mean_squared_error, median_absolute_error
     from time import time
 
-    # regressor = SVR()
-    regressor = NuSVR()
-    # regressor = KNeighborsRegressor()
-    # regressor = SGDRegressor()
-    # regressor = LogisticRegression(solver='sag', max_iter=100, n_jobs=2)
-    # regressor = LinearRegression()
-    # regressor = KernelRidge()
+    print 'Beginning prediction process...'
+
+    regressor = LinearRegression(n_jobs=-1)
+    # regr_cv = Lasso()
+    # regressor = Ridge()
+
+    # parameters = {'alpha': [0.5, 0.75, 1.], 'normalize': (True, False)}
+    # regressor = GridSearchCV(regr_cv, parameters, n_jobs=4,
+    #                        pre_dispatch='2*n_jobs')
 
     if slice_samples != 0:
         try:
@@ -50,6 +49,7 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
         X_test = X_test[:test_sl_len]
         y_test = y_test[:test_sl_len]
     # else is not necessary, all the samples are taken
+
     t0 = time()
     regressor.fit(X_train, y_train)
     t1 = time() - t0

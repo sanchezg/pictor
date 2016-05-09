@@ -54,8 +54,13 @@ def load_features_from_file(filename='features_unwanted.csv'):
     """
     features_list = []
     with open(filename, 'r') as f:
-        line = f.readline()
-        features_list = [feat for feat in line.split(',')]
+        lines = f.readlines()
+        features_list = [str(feat).split('\n')[0] for feat in lines
+                            if not feat.startswith('#')]
+    if 'vertical' in features_list:
+        idx = features_list.index('vertical')
+        features_list[idx] = 'vertical\n'
+    # print features_list
     return features_list
 
 
