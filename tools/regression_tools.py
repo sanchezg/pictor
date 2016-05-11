@@ -32,7 +32,7 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
     regressor = LinearRegression(n_jobs=-1)
     # regr_cv = Lasso()
     # regressor = Ridge()
-
+    
     # parameters = {'alpha': [0.5, 0.75, 1.], 'normalize': (True, False)}
     # regressor = GridSearchCV(regr_cv, parameters, n_jobs=4,
     #                        pre_dispatch='2*n_jobs')
@@ -54,21 +54,21 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
     regressor.fit(X_train, y_train)
     t1 = time() - t0
     print 'Time training algorithm: {}'.format(t1)
-
+    
     # clean outliers
-    print 'Finding outliers...'
-    t0 = time()
-    prediction = regressor.predict(X_train)
-    cleaned_data = outliers_cleaner(prediction, X_train, y_train)
-    t1 = time() - t0
-    print 'Time finding outliers: {}'.format(t1)
-    if len(cleaned_data) > 0:
-        print 'Re-fitting algorithm due to outliers detection...'
-        t0 = time()
-        x_input, y_output, errors = zip(*cleaned_data)
-        regressor.fit(x_input, y_output)  # re-fit
-        t1 = time() - t0
-        print 'Time re-fitting algorithm: {}'.format(t1)
+    # print 'Finding outliers...'
+    # t0 = time()
+    # prediction = regressor.predict(X_train)
+    # cleaned_data = outliers_cleaner(prediction, X_train, y_train)
+    # t1 = time() - t0
+    # print 'Time finding outliers: {}'.format(t1)
+    # if len(cleaned_data) > 0:
+    #     print 'Re-fitting algorithm due to outliers detection...'
+    #     t0 = time()
+    #     x_input, y_output, errors = zip(*cleaned_data)
+    #     regressor.fit(x_input, y_output)  # re-fit
+    #     t1 = time() - t0
+    #     print 'Time re-fitting algorithm: {}'.format(t1)
 
     print 'Predicting results on test set ...'
     t0 = time()
@@ -76,12 +76,11 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
     t1 = time() - t0
     print 'Time prediction algorithm: {}'.format(t1)
 
-    print 'Calculates score and accuracy...'
-    t0 = time()
+    print "Cross validation score..."
     acc = mean_squared_error(y_test, prediction)
     acc1 = median_absolute_error(y_test, prediction)
     acc2 = regressor.score(X_test, y_test)
-    t1 = time() - t0
+
     print "Time testing algorithm: {0}.\
     \nAccuracy:\
     \nmean_squared_error: {1},\
