@@ -20,22 +20,17 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
     performs a training using an sklearn algorithm and calculates the score
     using the testing inputs and outputs.
     """
-    from sklearn.linear_model import LinearRegression
-    # from sklearn.linear_model import Lasso
-    # from sklearn.linear_model import Ridge
-    # from sklearn.grid_search import GridSearchCV
+    # from sklearn.linear_model import LinearRegression
+    # from sklearn.tree import DecisionTreeRegressor
+    from sklearn.ensemble import RandomForestRegressor
     from sklearn.metrics import mean_squared_error, median_absolute_error
     from time import time
 
     print 'Beginning prediction process...'
 
-    regressor = LinearRegression(n_jobs=-1)
-    # regr_cv = Lasso()
-    # regressor = Ridge()
-    
-    # parameters = {'alpha': [0.5, 0.75, 1.], 'normalize': (True, False)}
-    # regressor = GridSearchCV(regr_cv, parameters, n_jobs=4,
-    #                        pre_dispatch='2*n_jobs')
+    # regressor = LinearRegression(n_jobs=-1)
+    # regressor = DecisionTreeRegressor()
+    regressor = RandomForestRegressor(n_jobs=-1)
 
     if slice_samples != 0:
         try:

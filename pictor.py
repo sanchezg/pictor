@@ -70,11 +70,13 @@ def load_and_format_data(filename):
     discard_features(corpus_dataset, features_undesired)
     preformat_dataset(corpus_dataset)
     targets = split_dataset(corpus_dataset)
-    print corpus_dataset[0]
-    # print targets[0]
+    # print corpus_dataset[0]
     dataset = transform_dataset(corpus_dataset)
+    del corpus_dataset # free some memory
     # scale_dataset(dataset)
     X_train, X_test, y_train, y_test = conform_data(dataset, targets)
+    del dataset
+    del targets
     make_prediction(X_train, y_train, X_test, y_test, show_score=True,
                     slice_samples=0)
     return

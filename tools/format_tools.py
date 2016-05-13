@@ -45,6 +45,7 @@ def load_dataset_from_csv(filename, delimiter='|', first_line=True,
             labels = data_line
             first_line_loaded = True
     print "Time loading dataset: {}".format(time() - t0)
+    file_obj.close()
     return dataset, labels
 
 
@@ -60,7 +61,6 @@ def load_features_from_file(filename='features_unwanted.csv'):
     if 'vertical' in features_list:
         idx = features_list.index('vertical')
         features_list[idx] = 'vertical\n'
-    # print features_list
     return features_list
 
 
