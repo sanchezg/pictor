@@ -1,36 +1,27 @@
-def slice_begin_end(array_len, percentile):
-    from random import randint, seed
-    from time import clock
-    seed(int(clock()))
+from time import time
 
-    last_begin = array_len / percentile
-    final_len = array_len * (1 - 1/percentile)
-
-    begin = randint(0, last_begin)
-    end = begin + final_len
-    while end >= array_len:
-        begin = randint(0, last_begin)
-        end = begin + final_len
-    return begin, end
+"""This file provides functions for the regression model of the data.
+"""
 
 
-def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
-                    slice_samples=0):
+def make_prediction(X_train, y_train, X_test, y_test, sv=False,
+                    slice_samples=0, pdetails=False):
     """This function receives training and testing inputs and outputs,
     performs a training using an sklearn algorithm and calculates the score
     using the testing inputs and outputs.
     """
-    # from sklearn.linear_model import LinearRegression
-    # from sklearn.tree import DecisionTreeRegressor
+    # from sklearn.grid_search import GridSearchCV
     from sklearn.ensemble import RandomForestRegressor
     from sklearn.metrics import mean_squared_error, median_absolute_error
-    from time import time
 
     print 'Beginning prediction process...'
 
-    # regressor = LinearRegression(n_jobs=-1)
-    # regressor = DecisionTreeRegressor()
-    regressor = RandomForestRegressor(n_jobs=-1)
+    regressor = RandomForestRegressor(bootstrap=True, n_jobs=-1,
+                                      n_estimators=25)
+    # regr_parameters = {'n_estimators': [5, 10, 20], 
+    #                    'max_features': [10, 25, "auto"],
+    #                    'bootstrap': (True, False)}
+    # regressor = GridSearchCV(regr, regr_parameters)
 
     if slice_samples != 0:
         try:
@@ -45,42 +36,44 @@ def make_prediction(X_train, y_train, X_test, y_test, show_score=False,
         y_test = y_test[:test_sl_len]
     # else is not necessary, all the samples are taken
 
-    t0 = time()
+    if sv:
+        t0 = time()
+
     regressor.fit(X_train, y_train)
-    t1 = time() - t0
-    print 'Time training algorithm: {}'.format(t1)
-    
-    # clean outliers
-    # print 'Finding outliers...'
-    # t0 = time()
-    # prediction = regressor.predict(X_train)
-    # cleaned_data = outliers_cleaner(prediction, X_train, y_train)
-    # t1 = time() - t0
-    # print 'Time finding outliers: {}'.format(t1)
-    # if len(cleaned_data) > 0:
-    #     print 'Re-fitting algorithm due to outliers detection...'
-    #     t0 = time()
-    #     x_input, y_output, errors = zip(*cleaned_data)
-    #     regressor.fit(x_input, y_output)  # re-fit
-    #     t1 = time() - t0
-    #     print 'Time re-fitting algorithm: {}'.format(t1)
+
+    if sv:
+        t1 = time() - t0
+        print 'Time training algorithm: {}'.format(t1)
+
+    if pdetails:
+        # print regressor.best_estimator_
+        print "Feature importances: {}".format(regressor.feature_importances_)
+        print "Estimators: {}".format(regressor.estimators_)
 
     print 'Predicting results on test set ...'
-    t0 = time()
+
+    if sv:
+        t0 = time()
+
     prediction = regressor.predict(X_test)
-    t1 = time() - t0
-    print 'Time prediction algorithm: {}'.format(t1)
+
+    if sv:
+        t1 = time() - t0
+        print 'Time prediction algorithm: {}'.format(t1)
 
     print "Cross validation score..."
     acc = mean_squared_error(y_test, prediction)
     acc1 = median_absolute_error(y_test, prediction)
     acc2 = regressor.score(X_test, y_test)
 
-    print "Time testing algorithm: {0}.\
-    \nAccuracy:\
-    \nmean_squared_error: {1},\
-    \nmedian_absolute_error: {2},\
-    \nregressor.score: {3}".format(t1, acc, acc1, acc2)
+    if sv:
+        print "Time testing algorithm: {0}.\
+        \nAccuracy:\
+        \nmean_squared_error: {1},\
+        \nmedian_absolute_error: {2},\
+        \nregressor.score: {3}".format(t1, acc, acc1, acc2)
+
+    return
 
 
 def outliers_cleaner(predictions, inputs, outputs, percentile=10):

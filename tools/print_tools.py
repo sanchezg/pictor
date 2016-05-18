@@ -1,3 +1,6 @@
+import numpy
+import pylab
+
 def print_some_data(x, y, count=25):
     """Prints the number count of data from x and y
     If labels = 'all' prints all data from x. If not
@@ -67,4 +70,35 @@ def print_threshold_element(dataset_d, threshold, label):
     for idx in xrange(count):
         if dataset_d[idx][label] > threshold:
             print dataset_d[idx]
+    return
+
+
+def plot_data(x_label, y_label, data, color='b'):
+    """This function receives a list of points and labels and plots them using
+    matplot library.
+    Data is an array of arrays in the form:
+        data[[point_x][point_y]].
+    """
+    import matplotlib.pyplot
+
+    for point in data:
+        point_x = point[0]
+        point_y = point[1]
+        matplotlib.pyplot.scatter(point_x, point_y)
+
+    matplotlib.pyplot.xlabel(x_label)
+    matplotlib.pyplot.ylabel(y_label)
+    matplotlib.pyplot.show()
+    return
+
+
+def plot_with_bars(labels, features, plot_count=10):
+    """This function plots the data in features param in a bar chart. 
+    """
+    sorted_idx = numpy.argsort(features)
+    bar_position = numpy.arange(sorted_idx.shape[0]) + .5
+    pylab.barh(bar_position, features[sorted_idx], align='center')
+    pylab.yticks(bar_position, labels[sorted_idx])
+    pylab.xlabel('Features importances')
+    pylab.show()
     return
