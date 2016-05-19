@@ -41,7 +41,7 @@ from time import time
 sys.path.append('tools/')
 
 from format_tools import *
-from print_tools import *
+from print_tools import plot_with_bars
 from regression_tools import make_prediction
 
 # Used to print duration of each function
@@ -90,15 +90,16 @@ def load_and_format_data(dataset_filename, discard_feat_filename):
     preformat_dataset(corpus_dataset, sv=show_verbose)
     targets = split_dataset(corpus_dataset, sv=show_verbose)
     # print corpus_dataset[0]
-    dataset = transform_dataset(corpus_dataset, sv=show_verbose)
+    dataset, labels_t = transform_dataset(corpus_dataset, sv=show_verbose)
     del corpus_dataset  # Free some memory
     # scale_dataset(dataset)
     X_train, X_test, y_train, y_test = conform_data(dataset, targets,
                                                     sv=show_verbose)
     del dataset  # Free some memory
     del targets  # Free some memory
-    make_prediction(X_train, y_train, X_test, y_test, sv=show_verbose,
-                    slice_samples=0)
+    feat_values = make_prediction(X_train, y_train, X_test, y_test,
+                                  slice_samples=0)
+    plot_with_bars(labels_t, feat_values)
     return 0
 
 

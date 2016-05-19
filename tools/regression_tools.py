@@ -1,27 +1,22 @@
 from time import time
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, median_absolute_error
+from print_tools import plot_with_bars
 
 """This file provides functions for the regression model of the data.
 """
 
 
-def make_prediction(X_train, y_train, X_test, y_test, sv=False,
-                    slice_samples=0, pdetails=False):
+def make_prediction(X_train, y_train, X_test, y_test, slice_samples=0,
+                    pdetails=False):
     """This function receives training and testing inputs and outputs,
     performs a training using an sklearn algorithm and calculates the score
     using the testing inputs and outputs.
     """
-    # from sklearn.grid_search import GridSearchCV
-    from sklearn.ensemble import RandomForestRegressor
-    from sklearn.metrics import mean_squared_error, median_absolute_error
-
     print 'Beginning prediction process...'
 
     regressor = RandomForestRegressor(bootstrap=True, n_jobs=-1,
                                       n_estimators=25)
-    # regr_parameters = {'n_estimators': [5, 10, 20], 
-    #                    'max_features': [10, 25, "auto"],
-    #                    'bootstrap': (True, False)}
-    # regressor = GridSearchCV(regr, regr_parameters)
 
     if slice_samples != 0:
         try:
@@ -36,44 +31,28 @@ def make_prediction(X_train, y_train, X_test, y_test, sv=False,
         y_test = y_test[:test_sl_len]
     # else is not necessary, all the samples are taken
 
-    if sv:
-        t0 = time()
-
+    t0 = time()
     regressor.fit(X_train, y_train)
-
-    if sv:
-        t1 = time() - t0
-        print 'Time training algorithm: {}'.format(t1)
+    print "Time training algorithm: {0:.2f}s".format(time()-t0)
 
     if pdetails:
-        # print regressor.best_estimator_
         print "Feature importances: {}".format(regressor.feature_importances_)
         print "Estimators: {}".format(regressor.estimators_)
 
     print 'Predicting results on test set ...'
-
-    if sv:
-        t0 = time()
-
+    t0 = time()
     prediction = regressor.predict(X_test)
-
-    if sv:
-        t1 = time() - t0
-        print 'Time prediction algorithm: {}'.format(t1)
+    print "Time prediction algorithm: {0:.2f}s".format(time()-t0)
 
     print "Cross validation score..."
     acc = mean_squared_error(y_test, prediction)
     acc1 = median_absolute_error(y_test, prediction)
     acc2 = regressor.score(X_test, y_test)
 
-    if sv:
-        print "Time testing algorithm: {0}.\
-        \nAccuracy:\
-        \nmean_squared_error: {1},\
-        \nmedian_absolute_error: {2},\
-        \nregressor.score: {3}".format(t1, acc, acc1, acc2)
-
-    return
+    print "Prediction accuracy and scores: \nmean_squared_error: {0},\
+    \nmedian_absolute_error: {1},\
+    \nregressor.score: {2}".format(acc, acc1, acc2)
+    return regressor.feature_importances_
 
 
 def outliers_cleaner(predictions, inputs, outputs, percentile=10):

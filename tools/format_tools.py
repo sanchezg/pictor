@@ -50,7 +50,7 @@ def load_dataset_from_csv(filename, delimiter='|', first_line=True,
             labels = data_line
             first_line_loaded = True
     if sv:
-        print "Time loading dataset: {}".format(time() - t0)
+        print "Time loading dataset: {0:.2f}s".format(time() - t0)
     return dataset, labels
 
 
@@ -94,7 +94,7 @@ def discard_features(dataset_d, features_unwanted, sv=True):
             except KeyError:
                 pass
     if sv:
-        print "Time discarding features: {}".format(time() - t0)
+        print "Time discarding features: {0:.2f}s".format(time() - t0)
     return
 
 
@@ -112,7 +112,7 @@ def preformat_dataset(dataset_d, sv=True):
         for label in labels:
             dataset_d[idx][label] = autoformat_element(dataset_d[idx][label])
     if sv:
-        print "Time preformatting dataset: {}".format(time() - t0)
+        print "Time preformatting dataset: {0:.2f}s".format(time() - t0)
     return
 
 
@@ -139,7 +139,7 @@ def split_dataset(dataset_d, target_feature='interactions', sv=True):
         output_values.append(row.pop(target_feature))
 
     if sv:
-        print "Time splitting dataset: {}".format(time() - t0)
+        print "Time splitting dataset: {0:.2f}s".format(time() - t0)
     return output_values
 
 
@@ -156,8 +156,8 @@ def transform_dataset(dataset_d, sv=True):
     dataset_t = vec.fit_transform(dataset_d)
 
     if sv:
-        print "Time transforming dataset: {}".format(time() - t0)
-    return dataset_t
+        print "Time transforming dataset: {0:.2f}s".format(time() - t0)
+    return dataset_t, vec.feature_names_
 
 
 def conform_data(dataset, targets, test_prop=0.30, sv=True):
@@ -175,7 +175,7 @@ def conform_data(dataset, targets, test_prop=0.30, sv=True):
         dataset, targets, test_size=test_prop, random_state=42)
 
     if sv:
-        print "Time conforming data: {}".format(time() - t0)
+        print "Time conforming data: {0:.2f}s".format(time() - t0)
     return X_train, X_test, y_train, y_test
 
 
