@@ -10,6 +10,7 @@ Using the functions and capabilities of scikit-learn in combination with NumPy a
 
 ## Design
 Pictor loads the input dataset, transforms it and use it values to call  scikit-learn prediction functions. The steps necessaries to perform this actions are:
+
 1. Load input csv file.
 2. Transform inner values types into proper types (*float* or *str*).
 3. Perform some feature engineering and see if all of them are necessaries.
