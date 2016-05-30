@@ -4,10 +4,28 @@ Pictor is a 'pictures interactions predictor':
 Given an input dataset, with about 50 different data from ~350000 pictures from social networks, pictor tries to predict the interactions over any other picture, with that same info.
 
 ## Execution requeriments:
-  - Python 2.7
+A requirements.txt file is included. This file contains the python pip dependencies. In order to execute the script, you need to have installed virtualenv. 
+
+Then create a new virtualenv by executing:
+```sh
+$ virtualenv some_new_venv
+```
+
+Activate the virtualenv just created:
+```sh
+$ source some_new_venv/bin/activate
+```
+
+Clone this project into this virtualenv, and install requirements by executing:
+```sh
+$ pip install -r requirements.txt
+```
+
+This will install the following dependencies inside locally to the virtualenv:
   - scikit-learn
   - NumPy
   - SciPy
+  - matplotlib
 
 ## Execution instructions
 In order to execute pictor, just call this module as argument of the python interpreter:
