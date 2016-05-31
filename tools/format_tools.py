@@ -3,23 +3,16 @@
 import numpy
 from time import time
 
-"""This file provides functions and tools for formatting data into different
+"""
+This file provides functions and tools for formatting data into different
 options.
 """
 
 
-def load_dataset_from_csv(filename, delimiter='|', first_line=True,
-                          output_format='dict', sv=True):
-    """This function tries to load a list of dictionaries from a csv file.
-    Parameter 'first_line' indicates if the first line in the csv file
-    contains the labels for the dataset. These labels are used as keys
-    in the dictionary.
-    The function returns the dataset (as a list of dict) and the labels
-    (as a list of str).
-    """
-    if sv:
-        print 'Loading dataset from csv file...'
-        t0 = time()
+def load_dataset_from_csv(filename, delimiter='|', features_to_discard = []):
+    """Tries to load the dataset from a csv file.
+    The function returns the dataset loaded as a list of dicts and the labels
+    as a list of str."""
 
     labels = []
     dataset = []
@@ -30,27 +23,18 @@ def load_dataset_from_csv(filename, delimiter='|', first_line=True,
         print "I/O error({0}): {1}".format(e.errno, e.strerror)
         return [], []
 
-    # CSV data will be loaded as:
-    # 'key': {
-    #        'ikey1': value,
-    #         'ikey2': value,
-    #        ...
-    #        'ikeyn': value
-    #        }
-
     lines = file_obj.readlines()
     file_obj.close()
 
     for line in lines:
-        data_line = line.split(delimiter)
+        data_line = map(autoformat_element, line.split(delimiter))
         if first_line_loaded:
             inner_dict = dict(zip(labels, data_line))
             dataset.append(inner_dict)
         else:
             labels = data_line
             first_line_loaded = True
-    if sv:
-        print "Time loading dataset: {0:.2f}s".format(time() - t0)
+
     return dataset, labels
 
 
@@ -70,50 +54,41 @@ def load_features_from_file(filename):
     features_list = [str(feat).split('\n')[0] for feat in lines
                      if not feat.startswith('#')]
 
+    # This label has a different form
     if 'vertical' in features_list:
         idx = features_list.index('vertical')
         features_list[idx] = 'vertical\n'
     return features_list
 
 
-def discard_features(dataset_d, features_unwanted, sv=True):
-    """This function removes from dataset_d all features which labels are in
+def discard_features(dataset_d, features_unwanted):
+    """Removes from dataset_d those features which labels are in
     features_unwanted.
     dataset_d should be a list of dicts as the one returned from
     'load_dataset_from_csv'.
-    features_unwanted should be a list of labels in str format.
-    """
-    if sv:
-        print 'Discarding undesired features...'
-        t0 = time()
-
+    features_unwanted should be a list of labels in str format."""
     for row in dataset_d:
         for feature in features_unwanted:
             try:
                 del row[feature]
             except KeyError:
                 pass
-    if sv:
-        print "Time discarding features: {0:.2f}s".format(time() - t0)
     return
 
 
-def preformat_dataset(dataset_d, sv=True):
-    """This function takes the dataset loaded with 'load_dataset_from_csv'
-    function and converts all numerical values to float type.
+def clean_dataset(dataset, labels_values):
     """
-    if sv:
-        print 'Preformatting dataset...'
-        t0 = time()
-
-    count = len(dataset_d)
-    labels = dataset_d[0].keys()
-    for idx in xrange(count):
-        for label in labels:
-            dataset_d[idx][label] = autoformat_element(dataset_d[idx][label])
-    if sv:
-        print "Time preformatting dataset: {0:.2f}s".format(time() - t0)
-    return
+    """
+    count = 0
+    for sample in dataset:
+        for feature, value in labels_values:
+            try:
+                if sample[feature] == value:
+                    del sample[feature]
+                    count += 1
+            except KeyError:
+                pass
+    return count
 
 
 def scale_dataset(corpus_dataset):
@@ -125,57 +100,40 @@ def scale_dataset(corpus_dataset):
     return
 
 
-def split_dataset(dataset_d, target_feature='interactions', sv=True):
+def split_dataset(dataset_d, target_feature='interactions'):
     """This function removes from the input dataset those values corresponding
     to the target feature (output), and append them to other list returned at
     the end.
     """
-    if sv:
-        print 'Splitting targets...'
-        t0 = time()
-
     output_values = []
     for row in dataset_d:
         output_values.append(row.pop(target_feature))
 
-    if sv:
-        print "Time splitting dataset: {0:.2f}s".format(time() - t0)
     return output_values
 
 
-def transform_dataset(dataset_d, sv=True):
+def transform_dataset(dataset_d):
     """Uses sklearn DictVectorizer to transform the dataset and convert inner
     categorical features in a suitable representation.
     """
     from sklearn.feature_extraction import DictVectorizer
 
-    if sv:
-        print 'Transforming dataset...'
-        t0 = time()
     vec = DictVectorizer(sparse=False)
     dataset_t = vec.fit_transform(dataset_d)
 
-    if sv:
-        print "Time transforming dataset: {0:.2f}s".format(time() - t0)
     return dataset_t, vec.feature_names_
 
 
-def conform_data(dataset, targets, test_prop=0.30, sv=True):
+def conform_data(dataset, targets, test_prop=0.30):
     """This function takes the dataset returned by 'transform_dataset'
     function and returns the trainer and tests arrays returned by
     sklearn.cross_validation module.
     """
     from sklearn.cross_validation import train_test_split
 
-    if sv:
-        print 'Conforming training and testing arrays...'
-        t0 = time()
-
     X_train, X_test, y_train, y_test = train_test_split(
         dataset, targets, test_size=test_prop, random_state=42)
 
-    if sv:
-        print "Time conforming data: {0:.2f}s".format(time() - t0)
     return X_train, X_test, y_train, y_test
 
 
@@ -184,6 +142,10 @@ def autoformat_element(element):
     If the input parameter is of str type then only a sanitization of str is
     performed.
     """
+    def str_sanitization(element):
+        """Erases the '\n' at the end in some str objects"""
+        return element.split('\n')[0]
+
     try:
         # Some elements can be empty, they should contain a value
         if element == '':
@@ -194,8 +156,3 @@ def autoformat_element(element):
         # The element is of str type
         element_formatted = str_sanitization(element)
     return element_formatted
-
-
-def str_sanitization(element):
-    """Erases the '\n' at the end in some str objects"""
-    return element.split('\n')[0]

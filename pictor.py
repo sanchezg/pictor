@@ -80,21 +80,41 @@ def get_args_parsed():
 
 
 def load_and_format_data(dataset_filename, discard_feat_filename):
-    corpus_dataset, corpus_labels = load_dataset_from_csv(dataset_filename,
-                                                          sv=show_verbose)
+    print 'Loading dataset from csv file...'
+    t0 = time()
+    corpus_dataset, corpus_labels = load_dataset_from_csv(dataset_filename)
+    print "Time loading dataset: {0:.2f}s".format(time() - t0)
+
     if corpus_dataset == []:
         return -1
+
     if discard_feat_filename != '':
+        print 'Discarding features...'
+        t0 = time()
         features_undesired = load_features_from_file(discard_feat_filename)
-        discard_features(corpus_dataset, features_undesired, sv=show_verbose)
-    preformat_dataset(corpus_dataset, sv=show_verbose)
-    targets = split_dataset(corpus_dataset, sv=show_verbose)
+        discard_features(corpus_dataset, features_undesired)
+        print "Time discarding features: {0:.2f}s".format(time() - t0)
+
+    print 'Splitting targets...'
+    t0 = time()
+    targets = split_dataset(corpus_dataset)
+    print "Time splitting dataset: {0:.2f}s".format(time() - t0)
+
     # print corpus_dataset[0]
-    dataset, labels_t = transform_dataset(corpus_dataset, sv=show_verbose)
+
+    print 'Transforming dataset...'
+    t0 = time()
+    dataset, labels_t = transform_dataset(corpus_dataset)
+    print "Time transforming dataset: {0:.2f}s".format(time() - t0)
+
     del corpus_dataset  # Free some memory
     # scale_dataset(dataset)
-    X_train, X_test, y_train, y_test = conform_data(dataset, targets,
-                                                    sv=show_verbose)
+
+    print 'Conforming training and testing arrays...'
+    t0 = time()
+    X_train, X_test, y_train, y_test = conform_data(dataset, targets)
+    print "Time conforming data: {0:.2f}s".format(time() - t0)
+
     del dataset  # Free some memory
     del targets  # Free some memory
     feat_values = make_prediction(X_train, y_train, X_test, y_test,
