@@ -1,14 +1,12 @@
 from time import time
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, median_absolute_error
-from print_tools import plot_with_bars
 
 """This file provides functions for the regression model of the data.
 """
 
 
-def make_prediction(X_train, y_train, X_test, y_test, slice_samples=0,
-                    pdetails=False):
+def make_prediction(X_train, y_train, X_test, y_test, pdetails=False):
     """This function receives training and testing inputs and outputs,
     performs a training using an sklearn algorithm and calculates the score
     using the testing inputs and outputs.
@@ -16,20 +14,7 @@ def make_prediction(X_train, y_train, X_test, y_test, slice_samples=0,
     print 'Beginning prediction process...'
 
     regressor = RandomForestRegressor(bootstrap=True, n_jobs=-1,
-                                      n_estimators=25)
-
-    if slice_samples != 0:
-        try:
-            train_sl_len = len(X_train)/slice_samples
-            test_sl_len = len(X_test)/slice_samples
-        except TypeError:
-            train_sl_len = len(X_train)
-            test_sl_len = len(X_test)
-        X_train = X_train[:train_sl_len]
-        y_train = y_train[:train_sl_len]
-        X_test = X_test[:test_sl_len]
-        y_test = y_test[:test_sl_len]
-    # else is not necessary, all the samples are taken
+                                      n_estimators=5)
 
     t0 = time()
     regressor.fit(X_train, y_train)
