@@ -1,5 +1,4 @@
 import numpy
-import pylab
 
 def print_some_data(x, y, count=25):
     """Prints the number count of data from x and y
@@ -62,9 +61,7 @@ def plot_data(x_label, y_label, data, color='b'):
     """
     import matplotlib.pyplot
 
-    for point in data:
-        point_x = point[0]
-        point_y = point[1]
+    for point_x, point_y in data:
         matplotlib.pyplot.scatter(point_x, point_y)
 
     matplotlib.pyplot.xlabel(x_label)

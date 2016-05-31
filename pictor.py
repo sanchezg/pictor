@@ -100,6 +100,12 @@ def load_and_format_data(dataset_filename, discard_feat_filename):
     targets = split_dataset(corpus_dataset)
     print "Time splitting dataset: {0:.2f}s".format(time() - t0)
 
+    print 'Printing targets...'
+    t0 = time()
+    data_to_print = [zip(xrange(len(targets)), targets)]
+    plot_data("No of feature", "Interactions", data_to_print)
+    print "Time printing targets: {0:.2f}s".format(time() - t0)
+
     # print corpus_dataset[0]
 
     print 'Transforming dataset...'
