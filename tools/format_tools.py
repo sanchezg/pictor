@@ -76,6 +76,21 @@ def discard_features(dataset_d, features_unwanted):
     return
 
 
+def discard_samples(dataset_d, threshold):
+    """Removes from dataset_d those samples which interactions label
+    has a value higher than threshold limit.
+    The amount of samples deleted is returned."""
+    count = 0
+    for row in dataset_d:
+        if row['interactions'] > threshold:
+            try:
+                del row
+                count += 1
+            except KeyError:
+                pass
+    return count
+
+
 def clean_dataset(dataset, labels_values):
     """
     """

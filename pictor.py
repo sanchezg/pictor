@@ -41,7 +41,7 @@ from time import time
 sys.path.append('tools/')
 
 from format_tools import *
-from print_tools import plot_with_bars
+from print_tools import plot_with_bars, plot_data, plot_histogram
 from regression_tools import make_prediction
 
 # Used to print duration of each function
@@ -95,16 +95,21 @@ def load_and_format_data(dataset_filename, discard_feat_filename):
         discard_features(corpus_dataset, features_undesired)
         print "Time discarding features: {0:.2f}s".format(time() - t0)
 
+    samples_deleted = discard_samples(corpus_dataset, 28000)
+    print "Samples deleted: {}".format(samples_deleted)
+
     print 'Splitting targets...'
     t0 = time()
     targets = split_dataset(corpus_dataset)
     print "Time splitting dataset: {0:.2f}s".format(time() - t0)
 
-    print 'Printing targets...'
-    t0 = time()
-    data_to_print = [zip(xrange(len(targets)), targets)]
-    plot_data("No of feature", "Interactions", data_to_print)
-    print "Time printing targets: {0:.2f}s".format(time() - t0)
+    # print 'Printing targets...'
+    # targets_slice_count = len(targets)
+    # targets_slice = targets[:targets_slice_count]
+    # t0 = time()
+    # plot_histogram("No of interactions", "Count", targets_slice)
+    # print "Time printing targets: {0:.2f}s".format(time() - t0)
+    # del targets_slice
 
     # print corpus_dataset[0]
 
@@ -123,8 +128,7 @@ def load_and_format_data(dataset_filename, discard_feat_filename):
 
     del dataset  # Free some memory
     del targets  # Free some memory
-    feat_values = make_prediction(X_train, y_train, X_test, y_test,
-                                  slice_samples=0)
+    feat_values = make_prediction(X_train, y_train, X_test, y_test)
     plot_with_bars(labels_t, feat_values)
     return 0
 

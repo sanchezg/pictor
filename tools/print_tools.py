@@ -61,8 +61,27 @@ def plot_data(x_label, y_label, data, color='b'):
     """
     import matplotlib.pyplot
 
-    for point_x, point_y in data:
+    point_x = 0
+    for point_y in sorted(data):
         matplotlib.pyplot.scatter(point_x, point_y)
+        point_x += 1
+
+    matplotlib.pyplot.xlabel(x_label)
+    matplotlib.pyplot.ylabel(y_label)
+    matplotlib.pyplot.show()
+    return
+
+
+def plot_histogram(x_label, y_label, data, normed=False, step=100):
+    """Plots an histogram with the array data passed by parameter.
+    """
+    import matplotlib.pyplot
+
+    bins = [a for a in xrange(0, int(max(data))+step, step)]
+    n, bins, p = matplotlib.pyplot.hist(data, bins=bins, normed=normed)
+
+    print "Histogram results..."
+    print "bin, n: {}".format(zip(bins, n))
 
     matplotlib.pyplot.xlabel(x_label)
     matplotlib.pyplot.ylabel(y_label)
@@ -75,29 +94,18 @@ def plot_with_bars(labels, importances, plot_count=10):
     """
     import matplotlib.pyplot as plt
 
-    importances_t = [imp for imp in importances]
+    pair_sorted = sorted(zip(importances, labels))
 
-    pair_sorted = sorted(zip(importances_t, labels))
-    del importances
-    del importances_t
-    del labels
-    # print importances_t[:10]
-    # print labels[:10]
+    end_slice = 0
+    if isinstance(plot_count, int) and plot_count > 0:
+        end_slice = -plot_count
 
-    lab_slice = []
     imp_slice = []
-    for value, label in reversed(pair_sorted):
+    lab_slice = []
+    max_importance = max(importances)
+    for value, label in pair_sorted[end_slice:]:
         lab_slice.append(label)
-        imp_slice.append(value)
-
-    if plot_count > 0:
-        lab_slice = lab_slice[:plot_count]
-        imp_slice = imp_slice[:plot_count]
-
-    # Normalize importances
-    max_importance = max(imp_slice)
-    for idx in xrange(len(imp_slice)):
-        imp_slice[idx] = imp_slice[idx] / max_importance
+        imp_slice.append(value/max_importance)
 
     # plt.rcdefaults()
     ypos = numpy.arange(len(lab_slice)) + .5
