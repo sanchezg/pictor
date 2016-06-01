@@ -47,6 +47,7 @@ from regression_tools import make_prediction
 # Used to print duration of each function
 show_verbose = True
 
+
 def process_arguments():
     parser = argparse.ArgumentParser(
         description='Pictor. More info: https://github.com/sanchezg/pictor')
@@ -95,7 +96,7 @@ def load_and_format_data(dataset_filename, discard_feat_filename):
         discard_features(corpus_dataset, features_undesired)
         print "Time discarding features: {0:.2f}s".format(time() - t0)
 
-    samples_deleted = discard_samples(corpus_dataset, 28000)
+    samples_deleted = discard_outliers(corpus_dataset, 28000)
     print "Samples deleted: {}".format(samples_deleted)
 
     print 'Splitting targets...'

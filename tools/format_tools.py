@@ -9,7 +9,7 @@ options.
 """
 
 
-def load_dataset_from_csv(filename, delimiter='|', features_to_discard = []):
+def load_dataset_from_csv(filename, delimiter='|', features_to_discard=[]):
     """Tries to load the dataset from a csv file.
     The function returns the dataset loaded as a list of dicts and the labels
     as a list of str."""

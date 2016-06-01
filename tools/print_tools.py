@@ -1,5 +1,6 @@
 import numpy
 
+
 def print_some_data(x, y, count=25):
     """Prints the number count of data from x and y
     If labels = 'all' prints all data from x. If not
@@ -90,7 +91,7 @@ def plot_histogram(x_label, y_label, data, normed=False, step=100):
 
 
 def plot_with_bars(labels, importances, plot_count=10):
-    """This function plots the data in importances param in a bar chart. 
+    """This function plots the data in importances param in a bar chart.
     """
     import matplotlib.pyplot as plt
 
