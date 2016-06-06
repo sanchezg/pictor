@@ -121,7 +121,6 @@ def load_and_format_data(dataset_filename, discard_feat_filename):
     del targets  # Free some memory
     feat_values = make_prediction(X_train, y_train, X_test, y_test)
 
-    print zip(labels_t, feat_values)
     plot_with_bars(labels_t, feat_values)
     return 0
 
