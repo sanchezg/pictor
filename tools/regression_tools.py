@@ -1,6 +1,6 @@
 from time import time
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, median_absolute_error
+from sklearn.metrics import mean_squared_error
 
 """This file provides functions for the regression model of the data.
 """
@@ -14,11 +14,18 @@ def make_prediction(X_train, y_train, X_test, y_test, pdetails=False):
     print 'Beginning prediction process...'
 
     regressor = RandomForestRegressor(bootstrap=True, n_jobs=-1,
-                                      n_estimators=5)
+                                      n_estimators=10)
 
     t0 = time()
     regressor.fit(X_train, y_train)
     print "Time training algorithm: {0:.2f}s".format(time()-t0)
+
+    print 'Predicting results on train set ...'
+    t0 = time()
+    prediction = regressor.predict(X_train)
+    mse = mean_squared_error(y_train, prediction)
+    print "Time prediction algorithm: {0:.2f}s".format(time()-t0)
+    print "MSE on train set: {:.3f}.".format(mse)
 
     if pdetails:
         print "Feature importances: {}".format(regressor.feature_importances_)
@@ -27,16 +34,13 @@ def make_prediction(X_train, y_train, X_test, y_test, pdetails=False):
     print 'Predicting results on test set ...'
     t0 = time()
     prediction = regressor.predict(X_test)
+    mse = mean_squared_error(y_test, prediction)
     print "Time prediction algorithm: {0:.2f}s".format(time()-t0)
+    print "MSE on test set: {:.3f}.".format(mse)
 
-    print "Cross validation score..."
-    acc = mean_squared_error(y_test, prediction)
-    acc1 = median_absolute_error(y_test, prediction)
-    acc2 = regressor.score(X_test, y_test)
+    score = regressor.score(X_test, y_test)
+    print "Prediction score: {:.3f}".format(score)
 
-    print "Prediction accuracy and scores: \nmean_squared_error: {0},\
-    \nmedian_absolute_error: {1},\
-    \nregressor.score: {2}".format(acc, acc1, acc2)
     return regressor.feature_importances_
 
 

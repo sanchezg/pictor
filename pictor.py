@@ -104,16 +104,6 @@ def load_and_format_data(dataset_filename, discard_feat_filename):
     targets = split_dataset(corpus_dataset)
     print "Time splitting dataset: {0:.2f}s".format(time() - t0)
 
-    # print 'Printing targets...'
-    # targets_slice_count = len(targets)
-    # targets_slice = targets[:targets_slice_count]
-    # t0 = time()
-    # plot_histogram("No of interactions", "Count", targets_slice)
-    # print "Time printing targets: {0:.2f}s".format(time() - t0)
-    # del targets_slice
-
-    # print corpus_dataset[0]
-
     print 'Transforming dataset...'
     t0 = time()
     dataset, labels_t = transform_dataset(corpus_dataset)
@@ -130,6 +120,8 @@ def load_and_format_data(dataset_filename, discard_feat_filename):
     del dataset  # Free some memory
     del targets  # Free some memory
     feat_values = make_prediction(X_train, y_train, X_test, y_test)
+
+    print zip(labels_t, feat_values)
     plot_with_bars(labels_t, feat_values)
     return 0
 
