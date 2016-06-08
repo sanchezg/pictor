@@ -7,7 +7,7 @@ caption_language
 # caption_world_length
 # checkouts
 # customer
-# customer_id
+customer_id
 # days
 faces_detected
 has_nudity
@@ -20,7 +20,7 @@ hashtags_category_count
 hashtags_most_frequent_jaccard
 hashtags_most_frequent_similarity
 hashtags_most_popular_jaccard
-# hashtags_most_popular_similarity
+hashtags_most_popular_similarity
 # hashtags_ontology_frequency
 # hashtags_ontology_reach
 hashtags_ratio_most_frequent
