@@ -153,55 +153,49 @@ if __name__ == '__main__':
                          empty_val=None)
     print "Done. Time loading dataset: {:.2f}s".format(time() - t0)
 
-    # analyse_continuous(ds)
-    # analyse_categorical(ds)
-    # Analyse and impute values for different features
-    # features_to_analyse = ['caption_char_lenght', 'caption_hash_count',
-    #     'caption_non_alpha_count', 'caption_upper_count', 'caption_world_length',
-    #     'days', 'hashtags_count', 'hashtags_most_frequent_jaccard',
-    #     'hashtags_most_frequent_similarity', 'hashtags_most_popular_jaccard',
-    #     'hashtags_ontology_reach', 'media_bright_variance', 'media_comments_count',
-    #     'media_likes_count', 'media_saturation_variance']
-    # for feature in features_to_analyse:
-    #     f_analysis = ds.analyse_continuous_feature(feature)
-    #     if f_analysis is not None:
-    #         missing = f_analysis[0]
-    #         mean = f_analysis[1]
-    #         median = f_analysis[2]
-    #         std_dev = f_analysis[3]
-    #         f_max = f_analysis[4]
-    #         f_min = f_analysis[5]
-    #         f_1q = f_analysis[6]
-    #         f_3q = f_analysis[7]
+    analyse_continuous(ds)
+    analyse_categorical(ds)
+    Analyse and impute values for different features
+    features_to_analyse = ['caption_char_lenght', 'caption_hash_count',
+        'caption_non_alpha_count', 'caption_upper_count', 'caption_world_length',
+        'days', 'hashtags_count', 'hashtags_most_frequent_jaccard',
+        'hashtags_most_frequent_similarity', 'hashtags_most_popular_jaccard',
+        'hashtags_ontology_reach', 'media_bright_variance', 'media_comments_count',
+        'media_likes_count', 'media_saturation_variance']
+    for feature in features_to_analyse:
+        f_analysis = ds.analyse_continuous_feature(feature)
+        if f_analysis is not None:
+            missing = f_analysis[0]
+            mean = f_analysis[1]
+            median = f_analysis[2]
+            std_dev = f_analysis[3]
+            f_max = f_analysis[4]
+            f_min = f_analysis[5]
+            f_1q = f_analysis[6]
+            f_3q = f_analysis[7]
 
-    #         higher_thre = f_3q + (1.5 * (f_3q - f_1q))
-    #         # Impute higher outliers
-    #         c = ds.impute_feature_value(feature, higher_thre,
-    #                                     lambda val, thre: val > thre)
-    #         print "Imputed: {0} values for {1}".format(c, feature)
+            higher_thre = f_3q + (1.5 * (f_3q - f_1q))
+            # Impute higher outliers
+            c = ds.impute_feature_value(feature, higher_thre,
+                                        lambda val, thre: val > thre)
+            print "Imputed: {0} values for {1}".format(c, feature)
 
-    # print "\n== Posterior imputing analysis"
-    # analyse_continuous(ds, features_to_analyse)
+    print "\n== Posterior imputing analysis"
+    analyse_continuous(ds, features_to_analyse)
 
-    # features_to_analyse = ['checkouts', 'hashtags_most_popular_similarity']
-    # print "Analysing {0} vs {1}".format(features_to_analyse[0],
-    #     features_to_analyse[1])
-    # analyse_continuous_x_features(ds, features_to_analyse)
+    features_to_analyse = ['checkouts', 'hashtags_most_popular_similarity']
+    print "Analysing {0} vs {1}".format(features_to_analyse[0],
+        features_to_analyse[1])
+    analyse_continuous_x_features(ds, features_to_analyse)
 
-    features_to_analyse = ['days', 'hashtags_count',
-        'hashtags_ontology_frequency',
-        'hashtags_ontology_reach', 'hashtags_ratio_most_frequent',
-        'hashtags_ratio_most_popular',
-        'hashtags_reach_score', 'how_many_faces', 'interactions',
-        'media_age_on_system', 'media_bright_coefficient_variation',
-        'media_bright_variance', 'media_comments_count',
-        'media_hue_coefficient_variation', 'media_hue_variance',
-        'media_likes_count', 'media_pixels',
-        'media_saturation_coefficient_variation', 'media_saturation_variance',
-        ]
-    feature_name = 'media_color_red'
+    features_to_analyse = ['caption_hash_count', 'caption_world_length']
+    feature_name = 'caption_hash_ratio'
 
     for feat in features_to_analyse:
         cpearson = calc_pearson_coeff(ds, feature_name, feat)
         print "Pearson correlation coeff for {0} vs {1}:\n{2}".format(
                     feature_name, feat, cpearson)
+
+    # for idx in xrange(ds.get_amount_samples()):
+    #     if None in ds.get_sample(idx).itervalues():
+    #         print ds.get_sample(idx)

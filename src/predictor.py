@@ -1,16 +1,13 @@
-import numpy
-from time import time
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.cross_validation import cross_val_score
 from sklearn.metrics import mean_squared_error
 
 
 class Predictor(object):
-    def __init__(self, n_estimators=25):
+    def __init__(self, n_estimators=50):
         """Constructor for the predictor object."""
-        self.regressor = RandomForestRegressor(bootstrap=True, n_jobs=-1,
-                                          n_estimators=n_estimators)
         self.score = -1
+        self.regressor = GradientBoostingRegressor(n_estimators=n_estimators)
 
     def fit_algorithm(self, x, y):
         """Wrapper to the sklearn regressor fit function."""
