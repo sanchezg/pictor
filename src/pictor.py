@@ -48,7 +48,7 @@ if __name__ == '__main__':
     t0 = time()
     dataset = DatasetExplorer(csv_filename, features_to_discard,
                               empty_val=None)
-    print "Done. Time loading dataset: {}".format(time()-t0)
+    print "Done. Time loading dataset: {:.2f}s".format(time()-t0)
 
     print "Formatting and cleaning dataset."
     # Features removal
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     print "DONE. Time preparing dataset: {:.2f}s".format(time()-t0)
 
     print "Modeling predictor... "
-    predictor = Predictor()
+    predictor = Predictor(n_estimators=100)
     t0 = time()
     predictor.fit_algorithm(X_train, y_train)
     prediction = predictor.predict_outputs(X_train)

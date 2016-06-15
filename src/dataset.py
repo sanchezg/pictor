@@ -328,6 +328,11 @@ class DatasetExplorer(object):
         """Returns a list with feature names."""
         return self.dataset[0].keys()
 
+    def get_feature_transformed(self):
+        """Returns a copy of features once have been transformed by
+        DictVectorizer."""
+        return self.feature_names
+
     def get_sample(self, idx):
         """Returns all features values for a specific sample."""
         return self.dataset[idx]

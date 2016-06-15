@@ -32,14 +32,13 @@ In order to execute pictor, just call this module as argument of the python inte
 ```sh
 $ python pictor.py <args>
 ```
-Were args can be:
+Were args must be:
   - --csv="<file>": Specify the input csv file. If it is not specified, then is assumed that the file is named 'consolidated_features.csv' and is located in the same path.
-  - --feat="<file>": Specify the input file with features to discard. The file should be a plain text file with one feature name by file. Lines beginning with '#' are discarded. An example file is in the root path.
-  - --verbose="y|n": Show verbose output. Verbose output include time duration for each function in the program. If it is not specified, then is assumed 'y'es.
+  - --feat="<file>": Specify the input file with features to discard. The file should be a plain text file with one feature name by file. Lines beginning with '#' are discarded. The file used with this project is 'features_to_discard.txt' and is located inside data folder.
 
 For example:
 ```sh
-$ python pictor.py --csv="../consolidated_features.csv" --feat="features_unwanted.csv"
+$ python pictor.py --csv="../consolidated_features.csv" --feat="../data/features_to_discard.txt"
 ```
 
 ## Tags:
