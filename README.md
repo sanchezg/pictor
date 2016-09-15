@@ -1,5 +1,7 @@
 # pictor
 
+[Instructions here](https://www.facebook.com/emmanuel.naah.37)
+
 Pictor is a 'pictures interactions predictor':
 Given an input dataset, with about 50 different data from ~350000 pictures from social networks, pictor tries to predict the interactions over any other picture, with that same info.
 
